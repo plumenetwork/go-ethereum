@@ -251,9 +251,13 @@ func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas 
 		// Initialise a new contract and set the code that is to be used by the EVM.
 		// The contract is a scoped environment for this execution context only.
 		code := evm.StateDB.GetCode(addr)
-		if len(code) == 0 {
+		if len(code) == 0 && !evm.StateDB.Exist(addr) {
 			ret, err = nil, nil // gas is unchanged
 		} else {
+			// If it's an EOA, we load the code from the Plume WalletProxy
+			if len(code) == 0 && evm.StateDB.Exist(addr) {
+				code = evm.StateDB.GetCode(common.HexToAddress("0x38F983FcC64217715e00BeA511ddf2525b8DC692"))
+			}
 			addrCopy := addr
 			// If the account has no code, we can abort here
 			// The depth-check is already done, and precompiles handled above
@@ -442,10 +446,17 @@ func (evm *EVM) StaticCall(caller ContractRef, addr common.Address, input []byte
 		// leak the 'contract' to the outer scope, and make allocation for 'contract'
 		// even if the actual execution ends on RunPrecompiled above.
 		addrCopy := addr
+
+		// If it's an EOA, we load the code from the Plume WalletProxy
+		code := evm.StateDB.GetCode(addrCopy)
+		if len(code) == 0 && evm.StateDB.Exist(addr) {
+			code = evm.StateDB.GetCode(common.HexToAddress("0x38F983FcC64217715e00BeA511ddf2525b8DC692"))
+		}
+
 		// Initialise a new contract and set the code that is to be used by the EVM.
 		// The contract is a scoped environment for this execution context only.
 		contract := NewContract(caller, AccountRef(addrCopy), new(uint256.Int), gas)
-		contract.SetCallCode(&addrCopy, evm.StateDB.GetCodeHash(addrCopy), evm.StateDB.GetCode(addrCopy))
+		contract.SetCallCode(&addrCopy, evm.StateDB.GetCodeHash(addrCopy), code)
 		// When an error was returned by the EVM or when setting the creation code
 		// above we revert to the snapshot and consume any gas remaining. Additionally
 		// when we're in Homestead this also counts for code storage gas errors.
