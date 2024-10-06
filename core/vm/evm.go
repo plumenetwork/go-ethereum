@@ -264,6 +264,7 @@ func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas 
 				walletAddr := common.HexToAddress("0x38F983FcC64217715e00BeA511ddf2525b8DC692")
 				code = evm.StateDB.GetCode(walletAddr)
 				codeHash = evm.StateDB.GetCodeHash(walletAddr)
+				contract.SetEoa()
 			}
 			contract.SetCallCode(&addrCopy, codeHash, code)
 			ret, err = evm.interpreter.Run(contract, input, false)
@@ -459,6 +460,7 @@ func (evm *EVM) StaticCall(caller ContractRef, addr common.Address, input []byte
 			walletAddr := common.HexToAddress("0x38F983FcC64217715e00BeA511ddf2525b8DC692")
 			code = evm.StateDB.GetCode(walletAddr)
 			codeHash = evm.StateDB.GetCodeHash(walletAddr)
+			contract.SetEoa()
 		}
 		contract.SetCallCode(&addrCopy, codeHash, code)
 		// When an error was returned by the EVM or when setting the creation code

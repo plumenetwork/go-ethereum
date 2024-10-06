@@ -80,8 +80,8 @@ func NewContract(caller ContractRef, object ContractRef, value *uint256.Int, gas
 	c.Gas = gas
 	// ensures a value is set
 	c.value = value
-        // By default, no contracts are EOAs until the first time c.Code is set for a smart wallet
-        c.eoa = false
+	// Only need to set eoa = true after setting Code to the smart wallet code
+	c.eoa = false
 
 	return c
 }
@@ -195,4 +195,9 @@ func (c *Contract) SetCodeOptionalHash(addr *common.Address, codeAndHash *codeAn
 	c.Code = codeAndHash.code
 	c.CodeHash = codeAndHash.hash
 	c.CodeAddr = addr
+}
+
+// SetEoa sets eoa = true when the contract is a smart wallet
+func (c *Contract) SetEoa() {
+	c.eoa = true
 }
