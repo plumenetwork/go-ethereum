@@ -61,6 +61,7 @@ type Contract struct {
 
 	Gas   uint64
 	value *uint256.Int
+	eoa   bool
 }
 
 // NewContract returns a new contract environment for the execution of EVM.
@@ -79,6 +80,8 @@ func NewContract(caller ContractRef, object ContractRef, value *uint256.Int, gas
 	c.Gas = gas
 	// ensures a value is set
 	c.value = value
+        // By default, no contracts are EOAs until the first time c.Code is set for a smart wallet
+        c.eoa = false
 
 	return c
 }

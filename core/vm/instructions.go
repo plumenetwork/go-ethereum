@@ -351,7 +351,11 @@ func opExtCodeSize(pc *uint64, interpreter *EVMInterpreter, scope *ScopeContext)
 }
 
 func opCodeSize(pc *uint64, interpreter *EVMInterpreter, scope *ScopeContext) ([]byte, error) {
-	scope.Stack.push(new(uint256.Int).SetUint64(uint64(len(scope.Contract.Code))))
+	if scope.Contract.eoa {
+		scope.Stack.push(new(uint256.Int).SetUint64(0))
+	} else {
+		scope.Stack.push(new(uint256.Int).SetUint64(uint64(len(scope.Contract.Code))))
+	}
 	return nil, nil
 }
 
@@ -365,7 +369,11 @@ func opCodeCopy(pc *uint64, interpreter *EVMInterpreter, scope *ScopeContext) ([
 	if overflow {
 		uint64CodeOffset = math.MaxUint64
 	}
-	codeCopy := getData(scope.Contract.Code, uint64CodeOffset, length.Uint64())
+	if scope.Contract.eoa {
+		codeCopy := getData(nil, uint64CodeOffset, length.Uint64())
+	} else {
+		codeCopy := getData(scope.Contract.Code, uint64CodeOffset, length.Uint64())
+	}
 	scope.Memory.Set(memOffset.Uint64(), length.Uint64(), codeCopy)
 
 	return nil, nil
