@@ -369,10 +369,9 @@ func opCodeCopy(pc *uint64, interpreter *EVMInterpreter, scope *ScopeContext) ([
 	if overflow {
 		uint64CodeOffset = math.MaxUint64
 	}
+	codeCopy := getData(scope.Contract.Code, uint64CodeOffset, length.Uint64())
 	if scope.Contract.eoa {
-		codeCopy := getData(nil, uint64CodeOffset, length.Uint64())
-	} else {
-		codeCopy := getData(scope.Contract.Code, uint64CodeOffset, length.Uint64())
+		codeCopy = getData(nil, uint64CodeOffset, length.Uint64())
 	}
 	scope.Memory.Set(memOffset.Uint64(), length.Uint64(), codeCopy)
 
