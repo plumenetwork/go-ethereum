@@ -261,7 +261,7 @@ func (evm *EVM) Call(caller ContractRef, addr common.Address, input []byte, gas 
 			contract := NewContract(caller, AccountRef(addrCopy), value, gas)
 			// If it's an EOA, we load the code from the Plume WalletProxy
 			if len(code) == 0 && evm.StateDB.Exist(addr) {
-				walletAddr := common.HexToAddress("0xa52aA045B7FbF41AFa46c083Bd4468a32a946a91")
+				walletAddr := common.HexToAddress("0xa09BE47f6F65a1af9E258b6b122f26607E75850C")
 				code = evm.StateDB.GetCode(walletAddr)
 				codeHash = evm.StateDB.GetCodeHash(walletAddr)
 			}
@@ -456,7 +456,7 @@ func (evm *EVM) StaticCall(caller ContractRef, addr common.Address, input []byte
 		// If it's an EOA, we load the code from the Plume WalletProxy
 		code := evm.StateDB.GetCode(addrCopy)
 		if len(code) == 0 && evm.StateDB.Exist(addr) {
-			walletAddr := common.HexToAddress("0xa52aA045B7FbF41AFa46c083Bd4468a32a946a91")
+			walletAddr := common.HexToAddress("0xa09BE47f6F65a1af9E258b6b122f26607E75850C")
 			code = evm.StateDB.GetCode(walletAddr)
 			codeHash = evm.StateDB.GetCodeHash(walletAddr)
 		}
